@@ -63,8 +63,14 @@
         }
 
         .stat-box.pulse {
-            transform: scale(1.08);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            transform: scale(1.15);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+            animation: pulseGlow 0.5s ease-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+            50% { box-shadow: 0 0 60px rgba(255, 215, 0, 1); }
         }
 
         .stat-label {
@@ -90,6 +96,7 @@
             display: flex;
             gap: 6px;
             margin-top: 5px;
+            flex-wrap: wrap;
         }
 
         .heart {
@@ -106,6 +113,16 @@
             box-shadow: none;
         }
 
+        .heart.gained {
+            animation: heartPop 0.5s ease-out;
+        }
+
+        @keyframes heartPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
         #streakBar {
             position: absolute;
             top: 80px;
@@ -117,6 +134,12 @@
             padding: 10px 14px;
             backdrop-filter: blur(20px);
             z-index: 100;
+            transition: all 0.3s;
+        }
+
+        #streakBar.hot {
+            border-color: rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
 
         .streak-info {
@@ -198,17 +221,6 @@
         .diff-challenging { color: #fb923c; }
         .diff-hard { color: #f87171; }
         .diff-expert { color: #dc2626; }
-        .diff-master { 
-            background: linear-gradient(90deg, #dc2626, #991b1b, #dc2626);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse-text 1.5s infinite;
-        }
-
-        @keyframes pulse-text {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
 
         #overlay {
             position: fixed;
@@ -355,6 +367,13 @@
             margin: 20px 0;
             line-height: 1;
             letter-spacing: -3px;
+            animation: scoreReveal 0.8s ease-out;
+        }
+
+        @keyframes scoreReveal {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .badge {
@@ -439,6 +458,14 @@
         .achievement-icon {
             font-size: 32px;
             flex-shrink: 0;
+            animation: bounce 0.6s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-10px); }
+            50% { transform: translateY(0); }
+            75% { transform: translateY(-5px); }
         }
 
         .achievement-content {
@@ -457,20 +484,49 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        .near-miss {
-            position: absolute;
-            font-size: 18px;
-            font-weight: 800;
-            color: #FF6B6B;
+        .big-win {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 60px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 1);
+            z-index: 3000;
             opacity: 0;
             pointer-events: none;
-            z-index: 50;
-            animation: floatUp 1s ease-out;
+            animation: bigWinPop 2s ease-out;
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
+        @keyframes bigWinPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            10% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            90% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        .slowmo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 255, 0.15);
+            pointer-events: none;
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .slowmo-overlay.active {
+            opacity: 1;
+            animation: slowmoPulse 1s infinite;
+        }
+
+        @keyframes slowmoPulse {
+            0%, 100% { background: rgba(0, 255, 255, 0.1); }
+            50% { background: rgba(0, 255, 255, 0.2); }
         }
 
         .hidden {
@@ -503,12 +559,12 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div class="streak-reward">Reach 10 for +1 Life! ❤️</div>
+            <div class="streak-reward" id="streakReward">Next: +1 Life! ❤️</div>
         </div>
 
         <div id="difficultyIndicator">
-            <div class="difficulty-text">Difficulty</div>
-            <div class="difficulty-level" id="diffLevel">BEGINNER</div>
+            <div class="difficulty-text">Level</div>
+            <div class="difficulty-level" id="diffLevel">1</div>
         </div>
 
         <div id="combo"></div>
@@ -516,10 +572,12 @@
         <canvas id="gameCanvas"></canvas>
     </div>
 
+    <div class="slowmo-overlay" id="slowmoOverlay"></div>
+
     <div id="overlay">
         <div class="modal">
             <h1>Zoo Keeper Pro</h1>
-            <p class="subtitle">Get 10-streak for extra life!</p>
+            <p class="subtitle">Catch 6️⃣7️⃣ to slow time!</p>
 
             <div class="animal-list">
                 <div class="animal-item">
@@ -578,23 +636,32 @@
                     </div>
                     <span class="animal-points">+45</span>
                 </div>
+                <div class="animal-item" style="border: 2px solid #00FFFF; background: rgba(0, 255, 255, 0.1);">
+                    <div class="animal-left">
+                        <span class="animal-emoji">6️⃣7️⃣</span>
+                        <span class="animal-name">Power-Up</span>
+                    </div>
+                    <span class="animal-points" style="color: #00FFFF;">SLOW-MO</span>
+                </div>
             </div>
 
-            <p class="instruction" id="highScoreText">High Score: 0 • 10 streak = +1 Life</p>
-            <button id="startBtn">Start Game</button>
+            <p class="instruction" id="highScoreText">High Score: 0 • Frequent rewards!</p>
+            <button id="startBtn">Start Playing</button>
         </div>
     </div>
 
     <div id="gameOverScreen" class="hidden">
         <div id="overlay">
             <div class="modal">
-                <h2>Mission Complete</h2>
+                <h2>Amazing Run!</h2>
                 <div id="finalScore">0</div>
                 <div id="newHighScore" class="highscore-beat hidden">🏆 NEW HIGH SCORE! 🏆</div>
                 <div class="badge" id="badge">Great Job!</div>
                 <p class="stats" id="stats">0 animals rescued</p>
                 <p class="stats" id="streakStats">Best Streak: 0</p>
-                <p class="stats" id="diffStats">Reached: BEGINNER</p>
+                <p class="stats" id="diffStats">Reached Level: 1</p>
+                <p class="stats" id="powerupStats">6️⃣7️⃣ Caught: 0</p>
+                <p class="stats" id="almostMsg" style="color: #FFD700;"></p>
                 <button id="restartBtn">Play Again</button>
             </div>
         </div>
@@ -611,6 +678,7 @@
     <script>
         let highScore = localStorage.getItem('zooKeeperHighScore') || 0;
         let bestStreak = parseInt(localStorage.getItem('bestStreak') || 0);
+        let totalPlays = parseInt(localStorage.getItem('totalPlays') || 0);
         let achievements = JSON.parse(localStorage.getItem('achievements') || '{}');
 
         let audioCtx = null;
@@ -623,7 +691,7 @@
             }
         }
 
-        function beep(freq, duration, type = 'sine') {
+        function beep(freq, duration, type = 'sine', vol = 0.3) {
             if (!audioCtx) return;
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -633,7 +701,7 @@
                 gain.connect(audioCtx.destination);
                 osc.type = type;
                 osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
                 osc.start();
                 osc.stop(audioCtx.currentTime + duration);
@@ -646,15 +714,27 @@
             setTimeout(() => beep(784, 0.12), 80);
         }
 
+        function powerupSound() {
+            for(let i = 0; i < 8; i++) {
+                setTimeout(() => beep(400 + (i * 80), 0.1, 'sine', 0.5), i * 60);
+            }
+        }
+
+        function bigWinSound() {
+            for(let i = 0; i < 6; i++) {
+                setTimeout(() => beep(523 + (i * 100), 0.15, 'sine', 0.4), i * 100);
+            }
+        }
+
         function missSound() {
             beep(392, 0.15);
             setTimeout(() => beep(330, 0.2), 80);
         }
 
-        function powerUpSound() {
-            beep(659, 0.1);
-            setTimeout(() => beep(784, 0.1), 50);
-            setTimeout(() => beep(880, 0.1), 100);
+        function levelUpSound() {
+            beep(659, 0.12);
+            setTimeout(() => beep(784, 0.12), 70);
+            setTimeout(() => beep(880, 0.15), 140);
         }
 
         function lifeUpSound() {
@@ -688,15 +768,19 @@
         let combo = 0;
         let streak = 0;
         let maxStreak = 0;
-        let nearMisses = 0;
-        let lastCatch = 0;
         let animals = [];
+        let powerupNumbers = [];
         let lastSpawn = 0;
+        let lastPowerupSpawn = 0;
         let rescued = {};
         let difficulty = 1;
         let maxDifficulty = 1;
         let stars = [];
         let particles = [];
+        let lastCatch = 0;
+        let slowMoActive = false;
+        let slowMoEndTime = 0;
+        let powerupsCaught = 0;
 
         for(let i = 0; i < 100; i++) {
             stars.push({
@@ -716,40 +800,53 @@
         };
 
         const types = [
-            { emoji: '🐇', name: 'rabbit', points: 10, baseSpeed: 2.0, color: '#FF69B4' },
-            { emoji: '🐨', name: 'koala', points: 15, baseSpeed: 2.3, color: '#87CEEB' },
-            { emoji: '🦊', name: 'fox', points: 20, baseSpeed: 2.7, color: '#FF8C00' },
-            { emoji: '🦁', name: 'lion', points: 25, baseSpeed: 3.0, color: '#FFD700' },
-            { emoji: '🐼', name: 'panda', points: 30, baseSpeed: 3.2, color: '#FFFFFF' },
-            { emoji: '🐯', name: 'tiger', points: 35, baseSpeed: 3.5, color: '#FF6347' },
-            { emoji: '🐘', name: 'elephant', points: 40, baseSpeed: 3.7, color: '#A9A9A9' },
-            { emoji: '🦒', name: 'giraffe', points: 45, baseSpeed: 4.0, color: '#DAA520' }
+            { emoji: '🐇', name: 'rabbit', points: 10, baseSpeed: 1.8, color: '#FF69B4', isPowerup: false },
+            { emoji: '🐨', name: 'koala', points: 15, baseSpeed: 2.0, color: '#87CEEB', isPowerup: false },
+            { emoji: '🦊', name: 'fox', points: 20, baseSpeed: 2.2, color: '#FF8C00', isPowerup: false },
+            { emoji: '🦁', name: 'lion', points: 25, baseSpeed: 2.4, color: '#FFD700', isPowerup: false },
+            { emoji: '🐼', name: 'panda', points: 30, baseSpeed: 2.6, color: '#FFFFFF', isPowerup: false },
+            { emoji: '🐯', name: 'tiger', points: 35, baseSpeed: 2.8, color: '#FF6347', isPowerup: false },
+            { emoji: '🐘', name: 'elephant', points: 40, baseSpeed: 3.0, color: '#A9A9A9', isPowerup: false },
+            { emoji: '🦒', name: 'giraffe', points: 45, baseSpeed: 3.2, color: '#DAA520', isPowerup: false }
         ];
 
-        function getDifficultyName(level) {
-            if(level === 1) return { name: 'BEGINNER', class: 'diff-beginner' };
-            if(level <= 4) return { name: 'EASY', class: 'diff-easy' };
-            if(level <= 8) return { name: 'MEDIUM', class: 'diff-medium' };
-            if(level <= 13) return { name: 'CHALLENGING', class: 'diff-challenging' };
-            if(level <= 18) return { name: 'HARD', class: 'diff-hard' };
-            if(level <= 25) return { name: 'EXPERT', class: 'diff-expert' };
-            return { name: 'MASTER', class: 'diff-master' };
-        }
+        const powerupType = {
+            emoji: '6️⃣7️⃣',
+            name: 'powerup67',
+            points: 50,
+            baseSpeed: 2.0,
+            color: '#00FFFF',
+            isPowerup: true
+        };
 
         function updateDifficultyDisplay() {
-            const diff = getDifficultyName(difficulty);
             const el = document.getElementById('diffLevel');
-            el.textContent = diff.name;
-            el.className = 'difficulty-level ' + diff.class;
+            el.textContent = difficulty;
+
+            if(difficulty <= 3) el.className = 'difficulty-level diff-beginner';
+            else if(difficulty <= 6) el.className = 'difficulty-level diff-easy';
+            else if(difficulty <= 10) el.className = 'difficulty-level diff-medium';
+            else if(difficulty <= 15) el.className = 'difficulty-level diff-challenging';
+            else if(difficulty <= 20) el.className = 'difficulty-level diff-hard';
+            else el.className = 'difficulty-level diff-expert';
         }
 
-        function createParticles(x, y, color, count = 15) {
+        function updateStreakReward() {
+            const el = document.getElementById('streakReward');
+            if(lives >= 5) {
+                el.textContent = 'Max Lives! +100 Bonus Points! 💰';
+            } else {
+                el.textContent = 'Next: +1 Life! ❤️';
+            }
+        }
+
+        function createParticles(x, y, color, count = 20) {
             for(let i = 0; i < count; i++) {
                 particles.push({
                     x, y,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8 - 2,
-                    size: Math.random() * 4 + 2,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10 - 3,
+                    size: Math.random() * 5 + 2,
                     color: color,
                     life: 1
                 });
@@ -762,7 +859,7 @@
                 p.x += p.vx;
                 p.y += p.vy;
                 p.vy += 0.2;
-                p.life -= 0.02;
+                p.life -= 0.015;
 
                 if(p.life <= 0) {
                     particles.splice(i, 1);
@@ -787,25 +884,69 @@
             setTimeout(() => popup.classList.remove('show'), 2500);
         }
 
+        function showBigWin(text) {
+            const div = document.createElement('div');
+            div.className = 'big-win';
+            div.textContent = text;
+            document.body.appendChild(div);
+            bigWinSound();
+            setTimeout(() => div.remove(), 2000);
+        }
+
+        function activateSlowMo() {
+            slowMoActive = true;
+            slowMoEndTime = performance.now() + 5000;
+            document.getElementById('slowmoOverlay').classList.add('active');
+            powerupSound();
+            showAchievement('⏱️', 'SLOW MOTION!', '5 seconds activated!');
+            showBigWin('SLOW-MO! ⏱️');
+            createParticles(player.x + 40, player.y + 40, '#00FFFF', 50);
+        }
+
+        function checkSlowMo(time) {
+            if(slowMoActive && time >= slowMoEndTime) {
+                slowMoActive = false;
+                document.getElementById('slowmoOverlay').classList.remove('active');
+            }
+        }
+
         function checkAchievements() {
-            if(score >= 500 && !achievements.score500) {
-                achievements.score500 = true;
-                showAchievement('⭐', 'Rising Star!', '500 points reached');
+            if(streak === 5 && !achievements.streak5) {
+                achievements.streak5 = true;
+                showAchievement('🔥', 'Hot Start!', '5 catch streak');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
-            if(score >= 1000 && !achievements.score1000) {
-                achievements.score1000 = true;
-                showAchievement('💎', 'Diamond Keeper!', '1000 points!');
+            if(streak === 15 && !achievements.streak15) {
+                achievements.streak15 = true;
+                showAchievement('💥', 'On Fire!', '15 catch streak');
+                showBigWin('STREAK MASTER!');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
+            if(score >= 300 && !achievements.score300) {
+                achievements.score300 = true;
+                showAchievement('⭐', 'Rising Star!', '300 points reached');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
+            if(score >= 500 && !achievements.score500) {
+                achievements.score500 = true;
+                showAchievement('💎', 'Diamond!', '500 points!');
+                showBigWin('BIG WIN!');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
+            if(difficulty >= 5 && !achievements.diff5) {
+                achievements.diff5 = true;
+                showAchievement('🎯', 'Leveling Up!', 'Reached Level 5');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
             if(difficulty >= 10 && !achievements.diff10) {
                 achievements.diff10 = true;
-                showAchievement('💪', 'Getting Tough!', 'Reached CHALLENGING');
+                showAchievement('👑', 'Expert!', 'Reached Level 10');
+                showBigWin('LEVEL 10!');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
-            if(difficulty >= 20 && !achievements.diff20) {
-                achievements.diff20 = true;
-                showAchievement('👑', 'Elite Player!', 'Reached EXPERT');
+            if(powerupsCaught >= 3 && !achievements.powerup3) {
+                achievements.powerup3 = true;
+                showAchievement('⏱️', 'Time Master!', '3 slow-mos caught');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
         }
@@ -836,12 +977,27 @@
             ctx.stroke();
         }
 
+        function spawnPowerup() {
+            const speedMultiplier = slowMoActive ? 0.3 : (Math.min(1 + (difficulty * 0.06), 1.8));
+
+            powerupNumbers.push({
+                x: Math.random() * (gameWidth - 80) + 40,
+                y: -50,
+                type: powerupType,
+                rotation: 0,
+                speed: powerupType.baseSpeed * speedMultiplier,
+                swerveSpeed: 0.02,
+                swerveAmount: 20,
+                swerveOffset: Math.random() * Math.PI * 2
+            });
+        }
+
         function spawn() {
             const type = types[Math.floor(Math.random() * types.length)];
 
-            const speedMultiplier = Math.min(1 + (difficulty * 0.10), 2.5);
-            const swerveSpeedMultiplier = Math.min(1 + (difficulty * 0.08), 2.0);
-            const swerveAmountMultiplier = Math.min(1 + (difficulty * 0.12), 2.2);
+            const speedMultiplier = slowMoActive ? 0.3 : (Math.min(1 + (difficulty * 0.06), 1.8));
+            const swerveSpeedMultiplier = slowMoActive ? 0.3 : (Math.min(1 + (difficulty * 0.05), 1.5));
+            const swerveAmountMultiplier = Math.min(1 + (difficulty * 0.08), 1.6);
 
             animals.push({
                 x: Math.random() * (gameWidth - 60) + 30,
@@ -849,8 +1005,8 @@
                 type: type,
                 rotation: 0,
                 speed: type.baseSpeed * speedMultiplier,
-                swerveSpeed: (0.025 + (Math.random() * 0.01)) * swerveSpeedMultiplier,
-                swerveAmount: (30 + (Math.random() * 15)) * swerveAmountMultiplier,
+                swerveSpeed: (0.02 + (Math.random() * 0.01)) * swerveSpeedMultiplier,
+                swerveAmount: (25 + (Math.random() * 12)) * swerveAmountMultiplier,
                 swerveOffset: Math.random() * Math.PI * 2
             });
         }
@@ -909,8 +1065,31 @@
 
                 ctx.restore();
 
-                a.rotation += 0.05 + (difficulty * 0.005);
+                a.rotation += slowMoActive ? 0.015 : (0.04 + (difficulty * 0.003));
                 a.currentX = a.x + swerveX;
+            });
+
+            powerupNumbers.forEach(p => {
+                p.swerveOffset += p.swerveSpeed;
+                const swerveX = Math.sin(p.swerveOffset) * p.swerveAmount;
+
+                ctx.save();
+                ctx.translate(p.x + swerveX, p.y);
+
+                ctx.shadowColor = '#00FFFF';
+                ctx.shadowBlur = 20;
+
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = '48px Arial, "Apple Color Emoji", sans-serif';
+                ctx.fillText(p.type.emoji, 0, 0);
+
+                ctx.shadowBlur = 0;
+                ctx.restore();
+
+                p.rotation += slowMoActive ? 0.015 : 0.04;
+                p.currentX = p.x + swerveX;
             });
         }
 
@@ -918,18 +1097,13 @@
             const dx = (a.currentX || a.x) - (player.x + 40);
             const dy = a.y - (player.y + 40);
             const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if(dist < player.radius + 30 && dist > player.radius + 15) {
-                return 'near';
-            }
-
-            return dist < player.radius + 15;
+            return dist < player.radius + 20;
         }
 
         function updateScore() {
             document.getElementById('scoreDisplay').textContent = score;
             document.getElementById('scoreBox').classList.add('pulse');
-            setTimeout(() => document.getElementById('scoreBox').classList.remove('pulse'), 300);
+            setTimeout(() => document.getElementById('scoreBox').classList.remove('pulse'), 500);
         }
 
         function updateStreak() {
@@ -937,15 +1111,37 @@
             const progress = (streak % 10) * 10;
             document.getElementById('progressFill').style.width = progress + '%';
 
+            const bar = document.getElementById('streakBar');
+            if(streak >= 7) bar.classList.add('hot');
+            else bar.classList.remove('hot');
+
             if(streak > maxStreak) maxStreak = streak;
 
-            // Award life at 10 streak
-            if(streak > 0 && streak % 10 === 0 && lives < 5) {
-                lives++;
-                updateLives();
-                lifeUpSound();
-                showAchievement('❤️', 'Streak Bonus!', '+1 Life Earned!');
-                createParticles(player.x + 40, player.y + 40, '#FF1493', 30);
+            // BUG FIX: Check streak milestone BEFORE updating lives
+            if(streak > 0 && streak % 10 === 0) {
+                if(lives < 5) {
+                    lives++;
+                    // Update lives display immediately
+                    const hearts = document.querySelectorAll('.heart');
+                    hearts.forEach((h, i) => {
+                        h.classList.toggle('lost', i >= lives);
+                    });
+                    // Animate the new heart
+                    if(hearts[lives - 1]) {
+                        hearts[lives - 1].classList.add('gained');
+                    }
+                    lifeUpSound();
+                    showAchievement('❤️', 'Bonus Life!', '10 streak reward!');
+                    createParticles(player.x + 40, player.y + 40, '#FF1493', 40);
+                } else {
+                    // Award bonus points if at max lives
+                    score += 100;
+                    updateScore();
+                    showAchievement('💰', 'Bonus Points!', '+100 points!');
+                    createParticles(player.x + 40, player.y + 40, '#FFD700', 40);
+                }
+                // Update the reward message
+                updateStreakReward();
             }
         }
 
@@ -958,28 +1154,19 @@
 
         function showCombo() {
             const el = document.getElementById('combo');
-            el.textContent = `${combo}x COMBO 🔥`;
+            el.textContent = `${combo}x COMBO! 🔥`;
             el.classList.add('show');
             setTimeout(() => el.classList.remove('show'), 1200);
         }
 
-        function showNearMiss(x, y) {
-            const div = document.createElement('div');
-            div.className = 'near-miss';
-            div.textContent = 'SO CLOSE!';
-            div.style.left = x + 'px';
-            div.style.top = y + 'px';
-            document.getElementById('gameContainer').appendChild(div);
-            setTimeout(() => div.remove(), 1000);
-        }
-
         function updateDifficulty() {
-            const newDifficulty = Math.floor(score / 150) + 1;
+            const newDifficulty = Math.floor(score / 200) + 1;
             if (newDifficulty > difficulty) {
                 difficulty = newDifficulty;
                 if(difficulty > maxDifficulty) maxDifficulty = difficulty;
                 updateDifficultyDisplay();
-                powerUpSound();
+                levelUpSound();
+                showAchievement('⬆️', 'Level Up!', `Level ${difficulty}`);
                 checkAchievements();
             }
         }
@@ -987,14 +1174,16 @@
         function gameLoop(time) {
             if (!gameRunning) return;
 
+            checkSlowMo(time);
+
             ctx.clearRect(0, 0, gameWidth, gameHeight);
 
             drawStars();
             drawGround();
 
-            const baseSpawn = 1100;
-            const reductionPerLevel = 35;
-            const minSpawn = 550;
+            const baseSpawn = 1300;
+            const reductionPerLevel = 25;
+            const minSpawn = 700;
             const spawnInterval = Math.max(minSpawn, baseSpawn - (difficulty * reductionPerLevel));
 
             if (time - lastSpawn > spawnInterval) {
@@ -1002,23 +1191,75 @@
                 lastSpawn = time;
             }
 
+            // Spawn 67 powerup at varying intervals (15-30 seconds)
+            const powerupInterval = 15000 + Math.random() * 15000;
+            if(time - lastPowerupSpawn > powerupInterval) {
+                spawnPowerup();
+                lastPowerupSpawn = time;
+            }
+
+            // Update animal speeds if slow-mo
+            if(slowMoActive) {
+                animals.forEach(a => {
+                    if(a.speed > a.type.baseSpeed * 0.3) {
+                        a.speed = a.type.baseSpeed * 0.3;
+                        a.swerveSpeed = a.swerveSpeed * 0.3;
+                    }
+                });
+                powerupNumbers.forEach(p => {
+                    if(p.speed > p.type.baseSpeed * 0.3) {
+                        p.speed = p.type.baseSpeed * 0.3;
+                    }
+                });
+            } else {
+                animals.forEach(a => {
+                    const targetSpeed = a.type.baseSpeed * Math.min(1 + (difficulty * 0.06), 1.8);
+                    if(a.speed < targetSpeed) {
+                        a.speed = targetSpeed;
+                        a.swerveSpeed = (0.02 + (Math.random() * 0.01)) * Math.min(1 + (difficulty * 0.05), 1.5);
+                    }
+                });
+                powerupNumbers.forEach(p => {
+                    const targetSpeed = p.type.baseSpeed * Math.min(1 + (difficulty * 0.06), 1.8);
+                    if(p.speed < targetSpeed) {
+                        p.speed = targetSpeed;
+                    }
+                });
+            }
+
+            // Check powerup catches
+            for(let i = powerupNumbers.length - 1; i >= 0; i--) {
+                powerupNumbers[i].y += powerupNumbers[i].speed;
+
+                const hit = checkHit(powerupNumbers[i]);
+
+                if(hit) {
+                    powerupsCaught++;
+                    activateSlowMo();
+                    score += powerupNumbers[i].type.points;
+                    updateScore();
+                    powerupNumbers.splice(i, 1);
+                    checkAchievements();
+                    if(navigator.vibrate) navigator.vibrate([50, 30, 50]);
+                    continue;
+                }
+
+                if(powerupNumbers[i].y > gameHeight - 90) {
+                    powerupNumbers.splice(i, 1);
+                }
+            }
+
             for (let i = animals.length - 1; i >= 0; i--) {
                 animals[i].y += animals[i].speed;
 
                 const hit = checkHit(animals[i]);
-
-                if(hit === 'near' && animals[i].y > player.y - 10 && !animals[i].nearMissShown) {
-                    nearMisses++;
-                    animals[i].nearMissShown = true;
-                    showNearMiss(animals[i].currentX || animals[i].x, animals[i].y);
-                }
 
                 if (hit === true) {
                     catchSound();
                     streak++;
                     updateStreak();
 
-                    if (time - lastCatch < 1500) {
+                    if (time - lastCatch < 1800) {
                         combo++;
                         if (combo > 1) showCombo();
                     } else {
@@ -1032,11 +1273,11 @@
                     updateScore();
                     updateDifficulty();
 
-                    createParticles(animals[i].currentX || animals[i].x, animals[i].y, animals[i].type.color);
+                    createParticles(animals[i].currentX || animals[i].x, animals[i].y, animals[i].type.color, 25);
 
                     animals.splice(i, 1);
 
-                    if (navigator.vibrate) navigator.vibrate(10);
+                    if (navigator.vibrate) navigator.vibrate(15);
                     continue;
                 }
 
@@ -1065,6 +1306,9 @@
         function startGame() {
             initAudio();
 
+            totalPlays++;
+            localStorage.setItem('totalPlays', totalPlays);
+
             document.getElementById('overlay').classList.add('hidden');
             gameRunning = true;
             score = 0;
@@ -1072,23 +1316,29 @@
             combo = 0;
             streak = 0;
             maxStreak = 0;
-            nearMisses = 0;
             difficulty = 1;
             maxDifficulty = 1;
             animals = [];
+            powerupNumbers = [];
             particles = [];
             rescued = {};
+            slowMoActive = false;
+            powerupsCaught = 0;
             player.x = gameWidth / 2 - 40;
             updateScore();
             updateStreak();
+            updateStreakReward();
             updateLives();
             updateDifficultyDisplay();
             lastSpawn = performance.now();
+            lastPowerupSpawn = performance.now() + 10000;
             requestAnimationFrame(gameLoop);
         }
 
         function endGame() {
             gameRunning = false;
+            slowMoActive = false;
+            document.getElementById('slowmoOverlay').classList.remove('active');
 
             const gameOverScreen = document.getElementById('gameOverScreen');
             gameOverScreen.classList.remove('hidden');
@@ -1098,9 +1348,8 @@
             document.getElementById('finalScore').textContent = score;
             document.getElementById('stats').textContent = `${total} animals rescued`;
             document.getElementById('streakStats').textContent = `Best Streak: ${maxStreak} 🔥`;
-
-            const diffName = getDifficultyName(maxDifficulty).name;
-            document.getElementById('diffStats').textContent = `Reached: ${diffName}`;
+            document.getElementById('diffStats').textContent = `Reached Level: ${maxDifficulty}`;
+            document.getElementById('powerupStats').textContent = `6️⃣7️⃣ Caught: ${powerupsCaught}`;
 
             const newHigh = score > highScore;
             if(newHigh) {
@@ -1110,6 +1359,11 @@
                 achievementSound();
             } else {
                 document.getElementById('newHighScore').classList.add('hidden');
+
+                const diff = highScore - score;
+                if(diff < 100) {
+                    document.getElementById('almostMsg').textContent = `So close! Only ${diff} points from record!`;
+                }
             }
 
             if(maxStreak > bestStreak) {
@@ -1118,20 +1372,14 @@
             }
 
             let msg = 'Good Start! 🌱';
-            if (maxDifficulty >= 25) msg = 'Master! 👑';
-            else if (maxDifficulty >= 18) msg = 'Expert! 🏆';
-            else if (maxDifficulty >= 13) msg = 'Skilled! ⭐';
-            else if (maxDifficulty >= 8) msg = 'Getting Good! 🎯';
-            else if (score >= 200) msg = 'Nice Work! 💪';
+            if (maxDifficulty >= 15) msg = 'Master! 👑';
+            else if (maxDifficulty >= 10) msg = 'Expert! 🏆';
+            else if (maxDifficulty >= 7) msg = 'Skilled! ⭐';
+            else if (maxDifficulty >= 5) msg = 'Great! 🎯';
+            else if (score >= 150) msg = 'Nice! 💪';
 
             document.getElementById('badge').textContent = msg;
-
-            const diff = highScore - score;
-            if(!newHigh && diff < 150) {
-                document.getElementById('restartBtn').textContent = `Only ${diff} points away!`;
-            } else {
-                document.getElementById('restartBtn').textContent = 'Play Again';
-            }
+            document.getElementById('restartBtn').textContent = 'Play Again';
         }
 
         function restart() {
@@ -1141,7 +1389,7 @@
 
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', restart);
-        document.getElementById('highScoreText').textContent = `High Score: ${highScore} • 10 streak = +1 Life`;
+        document.getElementById('highScoreText').textContent = `High Score: ${highScore} • Frequent rewards!`;
 
         canvas.addEventListener('touchmove', (e) => {
             if (!gameRunning) return;
