@@ -40,21 +40,22 @@
 
         #hud {
             position: absolute;
-            top: 20px;
+            top: 15px;
             left: 0;
             right: 0;
-            padding: 0 20px;
+            padding: 0 15px;
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             z-index: 100;
         }
 
         .stat-box {
-            background: rgba(15, 20, 35, 0.85);
+            background: rgba(15, 20, 35, 0.9);
             border: 1px solid rgba(102, 126, 234, 0.25);
-            border-radius: 18px;
-            padding: 14px 22px;
-            min-width: 95px;
+            border-radius: 16px;
+            padding: 12px 18px;
+            min-width: 85px;
             backdrop-filter: blur(20px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 
                         inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -62,21 +63,21 @@
         }
 
         .stat-box.pulse {
-            transform: scale(1.1);
+            transform: scale(1.08);
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
         }
 
         .stat-label {
-            font-size: 10px;
+            font-size: 9px;
             color: rgba(255, 255, 255, 0.5);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 6px;
+            letter-spacing: 1.2px;
+            margin-bottom: 5px;
             font-weight: 600;
         }
 
         .stat-value {
-            font-size: 34px;
+            font-size: 30px;
             font-weight: 800;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
@@ -87,13 +88,13 @@
 
         .lives {
             display: flex;
-            gap: 7px;
-            margin-top: 6px;
+            gap: 6px;
+            margin-top: 5px;
         }
 
         .heart {
-            width: 11px;
-            height: 11px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             box-shadow: 0 0 12px rgba(102, 126, 234, 0.7);
@@ -107,13 +108,13 @@
 
         #streakBar {
             position: absolute;
-            top: 90px;
-            left: 20px;
-            right: 20px;
-            background: rgba(15, 20, 35, 0.85);
-            border: 1px solid rgba(102, 126, 234, 0.25);
+            top: 80px;
+            left: 15px;
+            right: 15px;
+            background: rgba(15, 20, 35, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 12px;
-            padding: 10px 16px;
+            padding: 10px 14px;
             backdrop-filter: blur(20px);
             z-index: 100;
         }
@@ -126,24 +127,25 @@
         }
 
         .streak-text {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #FFD700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
 
         .streak-count {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             color: #fff;
         }
 
         .progress-bar {
-            height: 6px;
+            height: 7px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 4px;
             overflow: hidden;
+            position: relative;
         }
 
         .progress-fill {
@@ -154,22 +156,30 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
+        .streak-reward {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
         #difficultyIndicator {
             position: absolute;
-            top: 160px;
-            left: 20px;
-            right: 20px;
-            background: rgba(15, 20, 35, 0.85);
+            top: 155px;
+            left: 15px;
+            right: 15px;
+            background: rgba(15, 20, 35, 0.9);
             border: 1px solid rgba(255, 107, 107, 0.3);
             border-radius: 12px;
-            padding: 8px 14px;
+            padding: 8px 12px;
             backdrop-filter: blur(20px);
             z-index: 100;
             text-align: center;
         }
 
         .difficulty-text {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             color: rgba(255, 255, 255, 0.7);
             text-transform: uppercase;
@@ -177,9 +187,9 @@
         }
 
         .difficulty-level {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 800;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
         .diff-beginner { color: #4ade80; }
@@ -261,14 +271,16 @@
             border-radius: 20px;
             padding: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 50vh;
+            overflow-y: auto;
         }
 
         .animal-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 18px;
-            margin: 6px 0;
+            padding: 12px 16px;
+            margin: 5px 0;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -277,27 +289,27 @@
         .animal-left {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .animal-emoji {
-            font-size: 34px;
+            font-size: 28px;
         }
 
         .animal-name {
-            font-size: 16px;
+            font-size: 14px;
             color: rgba(255, 255, 255, 0.95);
             font-weight: 700;
         }
 
         .animal-points {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            padding: 6px 14px;
+            padding: 5px 12px;
             background-color: rgba(255, 215, 0, 0.1);
             border-radius: 10px;
             border: 1px solid rgba(255, 215, 0, 0.2);
@@ -379,18 +391,18 @@
 
         #combo {
             position: absolute;
-            top: 210px;
+            top: 215px;
             left: 50%;
             transform: translateX(-50%) scale(0.8);
             background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
             color: white;
-            padding: 12px 24px;
-            border-radius: 14px;
-            font-size: 20px;
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 800;
             opacity: 0;
             transition: all 0.3s;
-            z-index: 100;
+            z-index: 99;
             box-shadow: 0 8px 24px rgba(255, 215, 0, 0.4);
         }
 
@@ -401,37 +413,47 @@
 
         .achievement {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            top: 15px;
+            right: 15px;
+            transform: translateX(350px);
             background: rgba(20, 25, 40, 0.98);
             border: 2px solid #FFD700;
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
+            border-radius: 14px;
+            padding: 12px 18px;
+            text-align: left;
             z-index: 2000;
-            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4);
-            transition: all 0.3s;
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.6);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            max-width: 250px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .achievement.show {
-            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            transform: translateX(0);
         }
 
         .achievement-icon {
-            font-size: 60px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .achievement-content {
+            flex: 1;
         }
 
         .achievement-text {
-            font-size: 22px;
+            font-size: 14px;
             font-weight: 800;
             color: #FFD700;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .achievement-desc {
-            font-size: 14px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.7);
         }
 
@@ -475,12 +497,13 @@
 
         <div id="streakBar">
             <div class="streak-info">
-                <span class="streak-text">🔥 Streak</span>
-                <span class="streak-count" id="streakCount">0</span>
+                <span class="streak-text">🔥 STREAK</span>
+                <span class="streak-count" id="streakCount">0/10</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
+            <div class="streak-reward">Reach 10 for +1 Life! ❤️</div>
         </div>
 
         <div id="difficultyIndicator">
@@ -496,7 +519,7 @@
     <div id="overlay">
         <div class="modal">
             <h1>Zoo Keeper Pro</h1>
-            <p class="subtitle">How far can you go?</p>
+            <p class="subtitle">Get 10-streak for extra life!</p>
 
             <div class="animal-list">
                 <div class="animal-item">
@@ -527,9 +550,37 @@
                     </div>
                     <span class="animal-points">+25</span>
                 </div>
+                <div class="animal-item">
+                    <div class="animal-left">
+                        <span class="animal-emoji">🐼</span>
+                        <span class="animal-name">Panda</span>
+                    </div>
+                    <span class="animal-points">+30</span>
+                </div>
+                <div class="animal-item">
+                    <div class="animal-left">
+                        <span class="animal-emoji">🐯</span>
+                        <span class="animal-name">Tiger</span>
+                    </div>
+                    <span class="animal-points">+35</span>
+                </div>
+                <div class="animal-item">
+                    <div class="animal-left">
+                        <span class="animal-emoji">🐘</span>
+                        <span class="animal-name">Elephant</span>
+                    </div>
+                    <span class="animal-points">+40</span>
+                </div>
+                <div class="animal-item">
+                    <div class="animal-left">
+                        <span class="animal-emoji">🦒</span>
+                        <span class="animal-name">Giraffe</span>
+                    </div>
+                    <span class="animal-points">+45</span>
+                </div>
             </div>
 
-            <p class="instruction" id="highScoreText">High Score: 0</p>
+            <p class="instruction" id="highScoreText">High Score: 0 • 10 streak = +1 Life</p>
             <button id="startBtn">Start Game</button>
         </div>
     </div>
@@ -551,8 +602,10 @@
 
     <div id="achievementPopup" class="achievement">
         <div class="achievement-icon" id="achIcon">🏆</div>
-        <div class="achievement-text" id="achText">Achievement!</div>
-        <div class="achievement-desc" id="achDesc">You did it!</div>
+        <div class="achievement-content">
+            <div class="achievement-text" id="achText">Achievement!</div>
+            <div class="achievement-desc" id="achDesc">You did it!</div>
+        </div>
     </div>
 
     <script>
@@ -604,6 +657,13 @@
             setTimeout(() => beep(880, 0.1), 100);
         }
 
+        function lifeUpSound() {
+            beep(523, 0.1);
+            setTimeout(() => beep(659, 0.1), 60);
+            setTimeout(() => beep(784, 0.1), 120);
+            setTimeout(() => beep(1047, 0.2), 180);
+        }
+
         function achievementSound() {
             for(let i = 0; i < 4; i++) {
                 setTimeout(() => beep(523 + (i * 100), 0.1), i * 80);
@@ -632,7 +692,7 @@
         let lastCatch = 0;
         let animals = [];
         let lastSpawn = 0;
-        let rescued = { rabbit: 0, koala: 0, fox: 0, lion: 0 };
+        let rescued = {};
         let difficulty = 1;
         let maxDifficulty = 1;
         let stars = [];
@@ -659,7 +719,11 @@
             { emoji: '🐇', name: 'rabbit', points: 10, baseSpeed: 2.0, color: '#FF69B4' },
             { emoji: '🐨', name: 'koala', points: 15, baseSpeed: 2.3, color: '#87CEEB' },
             { emoji: '🦊', name: 'fox', points: 20, baseSpeed: 2.7, color: '#FF8C00' },
-            { emoji: '🦁', name: 'lion', points: 25, baseSpeed: 3.0, color: '#FFD700' }
+            { emoji: '🦁', name: 'lion', points: 25, baseSpeed: 3.0, color: '#FFD700' },
+            { emoji: '🐼', name: 'panda', points: 30, baseSpeed: 3.2, color: '#FFFFFF' },
+            { emoji: '🐯', name: 'tiger', points: 35, baseSpeed: 3.5, color: '#FF6347' },
+            { emoji: '🐘', name: 'elephant', points: 40, baseSpeed: 3.7, color: '#A9A9A9' },
+            { emoji: '🦒', name: 'giraffe', points: 45, baseSpeed: 4.0, color: '#DAA520' }
         ];
 
         function getDifficultyName(level) {
@@ -720,28 +784,28 @@
             document.getElementById('achDesc').textContent = desc;
             popup.classList.add('show');
             achievementSound();
-            setTimeout(() => popup.classList.remove('show'), 3000);
+            setTimeout(() => popup.classList.remove('show'), 2500);
         }
 
         function checkAchievements() {
-            if(streak === 15 && !achievements.streak15) {
-                achievements.streak15 = true;
-                showAchievement('🔥', 'Hot Streak!', '15 catches in a row');
-                localStorage.setItem('achievements', JSON.stringify(achievements));
-            }
             if(score >= 500 && !achievements.score500) {
                 achievements.score500 = true;
                 showAchievement('⭐', 'Rising Star!', '500 points reached');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
+            if(score >= 1000 && !achievements.score1000) {
+                achievements.score1000 = true;
+                showAchievement('💎', 'Diamond Keeper!', '1000 points!');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
             if(difficulty >= 10 && !achievements.diff10) {
                 achievements.diff10 = true;
-                showAchievement('💪', 'Getting Tough!', 'Reached CHALLENGING level');
+                showAchievement('💪', 'Getting Tough!', 'Reached CHALLENGING');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
             if(difficulty >= 20 && !achievements.diff20) {
                 achievements.diff20 = true;
-                showAchievement('👑', 'Elite Player!', 'Reached EXPERT level');
+                showAchievement('👑', 'Elite Player!', 'Reached EXPERT');
                 localStorage.setItem('achievements', JSON.stringify(achievements));
             }
         }
@@ -775,10 +839,9 @@
         function spawn() {
             const type = types[Math.floor(Math.random() * types.length)];
 
-            // Gentle progressive scaling - caps at reasonable levels
-            const speedMultiplier = Math.min(1 + (difficulty * 0.10), 2.5); // Caps at 2.5x (level 15+)
-            const swerveSpeedMultiplier = Math.min(1 + (difficulty * 0.08), 2.0); // Caps at 2x
-            const swerveAmountMultiplier = Math.min(1 + (difficulty * 0.12), 2.2); // Caps at 2.2x
+            const speedMultiplier = Math.min(1 + (difficulty * 0.10), 2.5);
+            const swerveSpeedMultiplier = Math.min(1 + (difficulty * 0.08), 2.0);
+            const swerveAmountMultiplier = Math.min(1 + (difficulty * 0.12), 2.2);
 
             animals.push({
                 x: Math.random() * (gameWidth - 60) + 30,
@@ -825,10 +888,8 @@
             ctx.fillStyle = '#000000';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.font = '36px Arial, "Apple Color Emoji", sans-serif';
-            ctx.fillText('🧍', player.x + 25, player.y + 40);
-            ctx.font = '34px Arial, "Apple Color Emoji", sans-serif';
-            ctx.fillText('🥅', player.x + 55, player.y + 38);
+            ctx.font = '38px Arial, "Apple Color Emoji", sans-serif';
+            ctx.fillText('🧺', player.x + 40, player.y + 35);
         }
 
         function drawAnimals() {
@@ -848,7 +909,7 @@
 
                 ctx.restore();
 
-                a.rotation += 0.05 + (difficulty * 0.005); // Gentle rotation increase
+                a.rotation += 0.05 + (difficulty * 0.005);
                 a.currentX = a.x + swerveX;
             });
         }
@@ -872,11 +933,20 @@
         }
 
         function updateStreak() {
-            document.getElementById('streakCount').textContent = streak;
-            const progress = Math.min((streak % 10) * 10, 100);
+            document.getElementById('streakCount').textContent = `${streak}/10`;
+            const progress = (streak % 10) * 10;
             document.getElementById('progressFill').style.width = progress + '%';
 
             if(streak > maxStreak) maxStreak = streak;
+
+            // Award life at 10 streak
+            if(streak > 0 && streak % 10 === 0 && lives < 5) {
+                lives++;
+                updateLives();
+                lifeUpSound();
+                showAchievement('❤️', 'Streak Bonus!', '+1 Life Earned!');
+                createParticles(player.x + 40, player.y + 40, '#FF1493', 30);
+            }
         }
 
         function updateLives() {
@@ -904,7 +974,6 @@
         }
 
         function updateDifficulty() {
-            // Gentle progression - increases every 150 points (slower)
             const newDifficulty = Math.floor(score / 150) + 1;
             if (newDifficulty > difficulty) {
                 difficulty = newDifficulty;
@@ -923,10 +992,9 @@
             drawStars();
             drawGround();
 
-            // Gentle spawn rate increase - stays playable longer
             const baseSpawn = 1100;
-            const reductionPerLevel = 35; // 35ms per level (gentler)
-            const minSpawn = 550; // Minimum 550ms (more forgiving)
+            const reductionPerLevel = 35;
+            const minSpawn = 550;
             const spawnInterval = Math.max(minSpawn, baseSpawn - (difficulty * reductionPerLevel));
 
             if (time - lastSpawn > spawnInterval) {
@@ -960,7 +1028,7 @@
 
                     const points = animals[i].type.points * Math.max(1, combo);
                     score += points;
-                    rescued[animals[i].type.name]++;
+                    rescued[animals[i].type.name] = (rescued[animals[i].type.name] || 0) + 1;
                     updateScore();
                     updateDifficulty();
 
@@ -1009,7 +1077,7 @@
             maxDifficulty = 1;
             animals = [];
             particles = [];
-            rescued = { rabbit: 0, koala: 0, fox: 0, lion: 0 };
+            rescued = {};
             player.x = gameWidth / 2 - 40;
             updateScore();
             updateStreak();
@@ -1073,7 +1141,7 @@
 
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', restart);
-        document.getElementById('highScoreText').textContent = `High Score: ${highScore}`;
+        document.getElementById('highScoreText').textContent = `High Score: ${highScore} • 10 streak = +1 Life`;
 
         canvas.addEventListener('touchmove', (e) => {
             if (!gameRunning) return;
