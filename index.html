@@ -948,15 +948,17 @@
     </div>
 
     <script>
+
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_HERE",
-            authDomain: "your-app.firebaseapp.com",
-            databaseURL: "https://your-app-default-rtdb.firebaseio.com",
-            projectId: "your-app",
-            storageBucket: "your-app.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+            apiKey: "AIzaSyDWLgSdmM1E3Mq0_oVQK3H6UfvJWv0A8HM",
+            authDomain: "zookeeper-b75c4.firebaseapp.com",
+            databaseURL: "https://zookeeper-b75c4-default-rtdb.firebaseio.com",
+            projectId: "zookeeper-b75c4",
+            storageBucket: "zookeeper-b75c4.firebasestorage.app",
+            messagingSenderId: "424082143710",
+            appId: "1:424082143710:web:8b51fe37c4fbed77cbb2d6"
         };
+
 
         let database;
         let firebaseInitialized = false;
@@ -973,7 +975,7 @@
             document.getElementById('firebaseStatus').classList.add('error');
         }
 
-        function submitScoreToLeaderboard(playerName, score) {
+                function submitScoreToLeaderboard(playerName, score) {
             if (!firebaseInitialized) {
                 alert('Leaderboard is offline. Configure Firebase to enable.');
                 return;
@@ -986,21 +988,52 @@
 
             playerName = playerName.trim().substring(0, 20);
 
-            database.ref('leaderboard').push({
-                name: playerName,
-                score: score,
-                timestamp: Date.now(),
-                hash: btoa(score + '' + Date.now() + 'zookeeper2026')
-            }).then(() => {
-                showAchievement('🎯', 'Score Submitted!', `You're on the leaderboard!`);
-                localStorage.setItem('playerName', playerName);
+            // Create sanitized username key (lowercase, no special chars)
+            const usernameKey = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            if (!usernameKey) {
+                alert('Please use letters or numbers in your name!');
+                return;
+            }
+
+            const userRef = database.ref('leaderboard/' + usernameKey);
+
+            // Check if user already exists
+            userRef.once('value').then(snapshot => {
+                let shouldUpdate = true;
+
+                if (snapshot.exists()) {
+                    const existingScore = snapshot.val().score;
+                    if (score <= existingScore) {
+                        shouldUpdate = false;
+                        alert(`Your previous best score was ${existingScore}. Play again to beat it! 🎯`);
+                    } else {
+                        alert(`New high score! Previous: ${existingScore}, New: ${score} 🎉`);
+                    }
+                }
+
+                // Update only if new score is better (or first time)
+                if (shouldUpdate) {
+                    return userRef.set({
+                        name: playerName,
+                        score: score,
+                        timestamp: Date.now(),
+                        hash: btoa(score + '' + Date.now() + 'zookeeper2026')
+                    }).then(() => {
+                        if (!snapshot.exists()) {
+                            showAchievement('🎯', 'Score Submitted!', `You're on the leaderboard!`);
+                        }
+                        localStorage.setItem('playerName', playerName);
+                    });
+                }
             }).catch(error => {
                 console.error('Error submitting score:', error);
                 alert('Failed to submit score. Please try again.');
             });
         }
 
-        function loadLeaderboard() {
+
+                function loadLeaderboard() {
             if (!firebaseInitialized) {
                 document.getElementById('leaderboardList').innerHTML = 
                     '<p class="loading">Leaderboard offline. Configure Firebase in the code.</p>';
@@ -1010,8 +1043,6 @@
             document.getElementById('leaderboardList').innerHTML = '<p class="loading">Loading...</p>';
 
             database.ref('leaderboard')
-                .orderByChild('score')
-                .limitToLast(50)
                 .once('value')
                 .then(snapshot => {
                     const scores = [];
@@ -1019,16 +1050,20 @@
                         scores.push(child.val());
                     });
 
-                    scores.reverse();
+                    // Sort by score descending
+                    scores.sort((a, b) => b.score - a.score);
 
-                    if (scores.length === 0) {
+                    // Take top 50
+                    const topScores = scores.slice(0, 50);
+
+                    if (topScores.length === 0) {
                         document.getElementById('leaderboardList').innerHTML = 
                             '<p class="loading">No scores yet. Be the first!</p>';
                         return;
                     }
 
                     let html = '';
-                    scores.forEach((entry, index) => {
+                    topScores.forEach((entry, index) => {
                         const rank = index + 1;
                         let rankClass = '';
                         let rankEmoji = '';
@@ -1061,6 +1096,7 @@
                         '<p class="loading">Error loading leaderboard.</p>';
                 });
         }
+
 
         function escapeHtml(text) {
             const div = document.createElement('div');
