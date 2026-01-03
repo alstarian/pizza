@@ -246,6 +246,8 @@
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7),
                         inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         h1 {
@@ -283,7 +285,7 @@
             border-radius: 20px;
             padding: 8px;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            max-height: 50vh;
+            max-height: 40vh;
             overflow-y: auto;
         }
 
@@ -350,6 +352,12 @@
             box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
         }
 
+        button.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+            margin-top: 10px;
+        }
+
         .instruction {
             font-size: 13px;
             color: rgba(255, 255, 255, 0.5);
@@ -367,13 +375,6 @@
             margin: 20px 0;
             line-height: 1;
             letter-spacing: -3px;
-            animation: scoreReveal 0.8s ease-out;
-        }
-
-        @keyframes scoreReveal {
-            0% { transform: scale(0.5); opacity: 0; }
-            60% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .badge {
@@ -406,6 +407,23 @@
         @keyframes glow {
             0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
             50% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        .urge-message {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FF6B6B;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid #FF6B6B;
+            border-radius: 12px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
 
         #combo {
@@ -529,6 +547,70 @@
             50% { background: rgba(0, 255, 255, 0.2); }
         }
 
+        .game-over-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, rgba(10, 14, 26, 0.95) 70%);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .game-over-text {
+            font-size: 72px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-card-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .hidden {
             display: none !important;
         }
@@ -544,6 +626,8 @@
             <div class="stat-box">
                 <div class="stat-label">Lives</div>
                 <div class="lives" id="livesDisplay">
+                    <div class="heart"></div>
+                    <div class="heart"></div>
                     <div class="heart"></div>
                     <div class="heart"></div>
                     <div class="heart"></div>
@@ -645,24 +729,68 @@
                 </div>
             </div>
 
-            <p class="instruction" id="highScoreText">High Score: 0 • Frequent rewards!</p>
+            <p class="instruction" id="highScoreText">High Score: 0</p>
             <button id="startBtn">Start Playing</button>
+            <button class="secondary" id="statsBtn">View Stats 📊</button>
         </div>
     </div>
 
     <div id="gameOverScreen" class="hidden">
         <div id="overlay">
             <div class="modal">
-                <h2>Amazing Run!</h2>
+                <h2 id="gameOverTitle">Amazing Run!</h2>
                 <div id="finalScore">0</div>
                 <div id="newHighScore" class="highscore-beat hidden">🏆 NEW HIGH SCORE! 🏆</div>
+                <div id="urgePlayAgain" class="urge-message hidden"></div>
                 <div class="badge" id="badge">Great Job!</div>
                 <p class="stats" id="stats">0 animals rescued</p>
                 <p class="stats" id="streakStats">Best Streak: 0</p>
                 <p class="stats" id="diffStats">Reached Level: 1</p>
                 <p class="stats" id="powerupStats">6️⃣7️⃣ Caught: 0</p>
                 <p class="stats" id="almostMsg" style="color: #FFD700;"></p>
-                <button id="restartBtn">Play Again</button>
+                <button id="restartBtn">Play Again 🎮</button>
+                <button class="secondary" id="viewStatsBtn">View Full Stats 📊</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsScreen" class="hidden">
+        <div id="overlay">
+            <div class="modal">
+                <h2>📊 Player Stats</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="totalGames">0</div>
+                        <div class="stat-card-label">Games Played</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="totalAnimals">0</div>
+                        <div class="stat-card-label">Total Caught</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="totalPoints">0</div>
+                        <div class="stat-card-label">Total Points</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="bestScore">0</div>
+                        <div class="stat-card-label">High Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="longestStreak">0</div>
+                        <div class="stat-card-label">Best Streak</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-value" id="totalPowerups">0</div>
+                        <div class="stat-card-label">6️⃣7️⃣ Caught</div>
+                    </div>
+                </div>
+
+                <p class="stats" style="margin-top: 20px;">🏆 Highest Level: <span id="highestLevel">1</span></p>
+                <p class="stats">⭐ Favorite Animal: <span id="favAnimal">🐇 Rabbit</span></p>
+                <p class="stats" style="margin-top: 15px; color: rgba(255,255,255,0.4); font-size: 12px;">Keep playing to improve your stats!</p>
+
+                <button id="closeStatsBtn">Back to Menu</button>
             </div>
         </div>
     </div>
@@ -676,9 +804,14 @@
     </div>
 
     <script>
-        let highScore = localStorage.getItem('zooKeeperHighScore') || 0;
+        let highScore = parseInt(localStorage.getItem('zooKeeperHighScore') || 0);
         let bestStreak = parseInt(localStorage.getItem('bestStreak') || 0);
         let totalPlays = parseInt(localStorage.getItem('totalPlays') || 0);
+        let totalAnimalsCaught = parseInt(localStorage.getItem('totalAnimalsCaught') || 0);
+        let totalPointsEarned = parseInt(localStorage.getItem('totalPointsEarned') || 0);
+        let totalPowerupsCaught = parseInt(localStorage.getItem('totalPowerupsCaught') || 0);
+        let highestLevelReached = parseInt(localStorage.getItem('highestLevelReached') || 1);
+        let animalCounts = JSON.parse(localStorage.getItem('animalCounts') || '{}');
         let achievements = JSON.parse(localStorage.getItem('achievements') || '{}');
 
         let audioCtx = null;
@@ -818,6 +951,30 @@
             color: '#00FFFF',
             isPowerup: true
         };
+
+        function showStats() {
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('statsScreen').classList.remove('hidden');
+
+            document.getElementById('totalGames').textContent = totalPlays;
+            document.getElementById('totalAnimals').textContent = totalAnimalsCaught;
+            document.getElementById('totalPoints').textContent = totalPointsEarned.toLocaleString();
+            document.getElementById('bestScore').textContent = highScore;
+            document.getElementById('longestStreak').textContent = bestStreak;
+            document.getElementById('totalPowerups').textContent = totalPowerupsCaught;
+            document.getElementById('highestLevel').textContent = highestLevelReached;
+
+            let maxCount = 0;
+            let favAnimal = 'None';
+            for(let animal in animalCounts) {
+                if(animalCounts[animal] > maxCount) {
+                    maxCount = animalCounts[animal];
+                    const type = types.find(t => t.name === animal);
+                    if(type) favAnimal = type.emoji + ' ' + animal.charAt(0).toUpperCase() + animal.slice(1);
+                }
+            }
+            document.getElementById('favAnimal').textContent = favAnimal;
+        }
 
         function updateDifficultyDisplay() {
             const el = document.getElementById('diffLevel');
@@ -1117,30 +1274,24 @@
 
             if(streak > maxStreak) maxStreak = streak;
 
-            // BUG FIX: Check streak milestone BEFORE updating lives
             if(streak > 0 && streak % 10 === 0) {
                 if(lives < 5) {
                     lives++;
-                    // Update lives display immediately
+                    updateLives();
                     const hearts = document.querySelectorAll('.heart');
-                    hearts.forEach((h, i) => {
-                        h.classList.toggle('lost', i >= lives);
-                    });
-                    // Animate the new heart
                     if(hearts[lives - 1]) {
                         hearts[lives - 1].classList.add('gained');
+                        setTimeout(() => hearts[lives - 1].classList.remove('gained'), 500);
                     }
                     lifeUpSound();
                     showAchievement('❤️', 'Bonus Life!', '10 streak reward!');
                     createParticles(player.x + 40, player.y + 40, '#FF1493', 40);
                 } else {
-                    // Award bonus points if at max lives
                     score += 100;
                     updateScore();
                     showAchievement('💰', 'Bonus Points!', '+100 points!');
                     createParticles(player.x + 40, player.y + 40, '#FFD700', 40);
                 }
-                // Update the reward message
                 updateStreakReward();
             }
         }
@@ -1191,14 +1342,12 @@
                 lastSpawn = time;
             }
 
-            // Spawn 67 powerup at varying intervals (15-30 seconds)
             const powerupInterval = 15000 + Math.random() * 15000;
             if(time - lastPowerupSpawn > powerupInterval) {
                 spawnPowerup();
                 lastPowerupSpawn = time;
             }
 
-            // Update animal speeds if slow-mo
             if(slowMoActive) {
                 animals.forEach(a => {
                     if(a.speed > a.type.baseSpeed * 0.3) {
@@ -1227,7 +1376,6 @@
                 });
             }
 
-            // Check powerup catches
             for(let i = powerupNumbers.length - 1; i >= 0; i--) {
                 powerupNumbers[i].y += powerupNumbers[i].speed;
 
@@ -1269,7 +1417,10 @@
 
                     const points = animals[i].type.points * Math.max(1, combo);
                     score += points;
+
                     rescued[animals[i].type.name] = (rescued[animals[i].type.name] || 0) + 1;
+                    animalCounts[animals[i].type.name] = (animalCounts[animals[i].type.name] || 0) + 1;
+
                     updateScore();
                     updateDifficulty();
 
@@ -1310,6 +1461,7 @@
             localStorage.setItem('totalPlays', totalPlays);
 
             document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('statsScreen').classList.add('hidden');
             gameRunning = true;
             score = 0;
             lives = 3;
@@ -1340,46 +1492,84 @@
             slowMoActive = false;
             document.getElementById('slowmoOverlay').classList.remove('active');
 
-            const gameOverScreen = document.getElementById('gameOverScreen');
-            gameOverScreen.classList.remove('hidden');
+            const gameOverAnim = document.createElement('div');
+            gameOverAnim.className = 'game-over-animation';
+            gameOverAnim.innerHTML = '<div class="game-over-text">GAME OVER</div>';
+            document.body.appendChild(gameOverAnim);
 
             const total = Object.values(rescued).reduce((a, b) => a + b, 0);
+            totalAnimalsCaught += total;
+            totalPointsEarned += score;
+            totalPowerupsCaught += powerupsCaught;
+            if(maxDifficulty > highestLevelReached) {
+                highestLevelReached = maxDifficulty;
+                localStorage.setItem('highestLevelReached', highestLevelReached);
+            }
 
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('stats').textContent = `${total} animals rescued`;
-            document.getElementById('streakStats').textContent = `Best Streak: ${maxStreak} 🔥`;
-            document.getElementById('diffStats').textContent = `Reached Level: ${maxDifficulty}`;
-            document.getElementById('powerupStats').textContent = `6️⃣7️⃣ Caught: ${powerupsCaught}`;
+            localStorage.setItem('totalAnimalsCaught', totalAnimalsCaught);
+            localStorage.setItem('totalPointsEarned', totalPointsEarned);
+            localStorage.setItem('totalPowerupsCaught', totalPowerupsCaught);
+            localStorage.setItem('animalCounts', JSON.stringify(animalCounts));
 
-            const newHigh = score > highScore;
-            if(newHigh) {
-                highScore = score;
-                localStorage.setItem('zooKeeperHighScore', highScore);
-                document.getElementById('newHighScore').classList.remove('hidden');
-                achievementSound();
-            } else {
-                document.getElementById('newHighScore').classList.add('hidden');
+            setTimeout(() => {
+                gameOverAnim.remove();
 
-                const diff = highScore - score;
-                if(diff < 100) {
-                    document.getElementById('almostMsg').textContent = `So close! Only ${diff} points from record!`;
+                const gameOverScreen = document.getElementById('gameOverScreen');
+                gameOverScreen.classList.remove('hidden');
+
+                document.getElementById('finalScore').textContent = score;
+                document.getElementById('stats').textContent = `${total} animals rescued`;
+                document.getElementById('streakStats').textContent = `Best Streak: ${maxStreak} 🔥`;
+                document.getElementById('diffStats').textContent = `Reached Level: ${maxDifficulty}`;
+                document.getElementById('powerupStats').textContent = `6️⃣7️⃣ Caught: ${powerupsCaught}`;
+
+                const newHigh = score > highScore;
+                if(newHigh) {
+                    highScore = score;
+                    localStorage.setItem('zooKeeperHighScore', highScore);
+                    document.getElementById('newHighScore').classList.remove('hidden');
+                    document.getElementById('gameOverTitle').textContent = '🏆 NEW RECORD! 🏆';
+                    achievementSound();
+                    setTimeout(bigWinSound, 500);
+                } else {
+                    document.getElementById('newHighScore').classList.add('hidden');
+                    document.getElementById('gameOverTitle').textContent = 'Amazing Run!';
+
+                    const diff = highScore - score;
+                    const urgeEl = document.getElementById('urgePlayAgain');
+
+                    if(diff <= 50) {
+                        urgeEl.textContent = `SO CLOSE! Only ${diff} points away! 🔥 One more try!`;
+                        urgeEl.classList.remove('hidden');
+                        document.getElementById('restartBtn').textContent = 'BEAT IT NOW! 🎯';
+                    } else if(diff <= 150) {
+                        urgeEl.textContent = `You can do better! ${diff} points to beat! 💪`;
+                        urgeEl.classList.remove('hidden');
+                        document.getElementById('restartBtn').textContent = 'Try Again! 🚀';
+                    } else {
+                        urgeEl.classList.add('hidden');
+                        document.getElementById('restartBtn').textContent = 'Play Again 🎮';
+                    }
+
+                    if(diff < 100) {
+                        document.getElementById('almostMsg').textContent = `Almost there! Keep going! 🎯`;
+                    }
                 }
-            }
 
-            if(maxStreak > bestStreak) {
-                bestStreak = maxStreak;
-                localStorage.setItem('bestStreak', bestStreak);
-            }
+                if(maxStreak > bestStreak) {
+                    bestStreak = maxStreak;
+                    localStorage.setItem('bestStreak', bestStreak);
+                }
 
-            let msg = 'Good Start! 🌱';
-            if (maxDifficulty >= 15) msg = 'Master! 👑';
-            else if (maxDifficulty >= 10) msg = 'Expert! 🏆';
-            else if (maxDifficulty >= 7) msg = 'Skilled! ⭐';
-            else if (maxDifficulty >= 5) msg = 'Great! 🎯';
-            else if (score >= 150) msg = 'Nice! 💪';
+                let msg = 'Good Start! 🌱';
+                if (maxDifficulty >= 15) msg = 'Master! 👑';
+                else if (maxDifficulty >= 10) msg = 'Expert! 🏆';
+                else if (maxDifficulty >= 7) msg = 'Skilled! ⭐';
+                else if (maxDifficulty >= 5) msg = 'Great! 🎯';
+                else if (score >= 150) msg = 'Nice! 💪';
 
-            document.getElementById('badge').textContent = msg;
-            document.getElementById('restartBtn').textContent = 'Play Again';
+                document.getElementById('badge').textContent = msg;
+            }, 1500);
         }
 
         function restart() {
@@ -1389,7 +1579,17 @@
 
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', restart);
-        document.getElementById('highScoreText').textContent = `High Score: ${highScore} • Frequent rewards!`;
+        document.getElementById('statsBtn').addEventListener('click', showStats);
+        document.getElementById('viewStatsBtn').addEventListener('click', () => {
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            showStats();
+        });
+        document.getElementById('closeStatsBtn').addEventListener('click', () => {
+            document.getElementById('statsScreen').classList.add('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
+        });
+
+        document.getElementById('highScoreText').textContent = `High Score: ${highScore}`;
 
         canvas.addEventListener('touchmove', (e) => {
             if (!gameRunning) return;
