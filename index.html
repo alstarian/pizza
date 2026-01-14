@@ -13,7 +13,7 @@
     <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <!-- ADD THIS LINE -->
-<meta name="screen-orientation" content="portrait">
+
 
     
     <title>Zoo Keeper Pro</title>
@@ -753,8 +753,8 @@
 
 
 
-/* Portrait-only lock - hide game in landscape */
-@media (orientation: landscape) {
+/* Portrait-only lock - MOBILE ONLY */
+@media (orientation: landscape) and (max-width: 768px) {
     body::before {
         content: "📱 Please rotate your device";
         position: fixed;
