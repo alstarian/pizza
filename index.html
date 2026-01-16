@@ -253,20 +253,48 @@
             z-index: 1000;
         }
 
-        .modal {
-            background: rgba(20, 25, 40, 0.95);
-            border: 1px solid rgba(102, 126, 234, 0.2);
-            border-radius: 28px;
-            padding: 44px 36px;
-            max-width: 90%;
-            width: 370px;
-            margin: 0 auto;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
+      
+
+.modal {
+    background: rgba(20, 25, 40, 0.95);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 0; /* Remove rounded corners for full screen */
+    padding: 60px 24px 44px; /* Add more top padding for status bar */
+    width: 100%; /* Full width */
+    height: 100vh; /* Full viewport height */
+    max-width: 100%; /* Override the 370px limit */
+    max-height: 100vh; /* Full height */
+    margin: 0; /* Remove auto margins */
+    text-align: center;
+    box-shadow: none; /* Remove shadow for cleaner full-screen look */
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Optional: Add safe area padding for iPhone notch */
+@supports (padding: env(safe-area-inset-top)) {
+    .modal {
+        padding-top: calc(60px + env(safe-area-inset-top));
+        padding-bottom: calc(44px + env(safe-area-inset-bottom));
+    }
+}
+
+/* If you want to keep the rounded modal on larger screens: */
+@media (min-width: 768px) {
+    .modal {
+        border-radius: 28px;
+        padding: 44px 36px;
+        max-width: 90%;
+        width: 370px;
+        height: auto;
+        max-height: 90vh;
+        margin: 0 auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+}
+
 
         h1 {
             font-size: 44px;
