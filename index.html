@@ -23,6 +23,60 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <style>
+
+
+
+                            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background: #0a0e1a;
+            }
+
+
+                            canvas {
+                width: 100% !important;
+                height: 100% !important;
+                display: block;
+                margin: 0;
+                padding: 0;
+            }
+
+
+                /* Make both stat boxes vertically centered and more compact */
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;    /* Perfect vertical centering */
+            align-items: flex-start;
+            padding: 10px 16px;         /* Reduced from 12px 18px — makes boxes shorter/tighter */
+            min-width: 80px;            /* Slightly smaller min-width */
+            height: 68px;               /* Optional: Force exact same height on both boxes (tweak if needed) */
+        }
+
+        /* Smaller score number to better match lives box height */
+        .stat-value {
+            font-size: 25px;            /* Try 24px if you want it even smaller */
+            line-height: 1;
+        }
+
+        /* Fine-tune lives box alignment */
+        .stat-label {
+            margin-bottom: 4px;         /* Reduced from 5px */
+        }
+
+        .lives {
+            margin-top: 6px;             /* Slight push down so hearts sit centered */
+            justify-content: center;    /* Ensures hearts are centered if they wrap (rare) */
+        }
+
+
+
+
+
+
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap');
 
         * {
@@ -39,15 +93,18 @@
             height: 100vh;
         }
 
-        #gameContainer {
-            position: relative;
+           #gameContainer {
+            position: fixed;     /* Changed from relative to fixed for true full-screen */
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            max-width: 430px;
-            margin: 0 auto;
+            max-width: none;     /* Critical: removes the 430px cap */
+            margin: 0;
+            padding: 0;
             background: radial-gradient(ellipse at top, #1a1f35 0%, #0a0e1a 100%);
+            overflow: hidden;    /* Prevents any scroll/overflow issues */
         }
-
         canvas {
             display: block;
             width: 100%;
@@ -824,6 +881,43 @@
 
 
 
+@supports (padding: env(safe-area-inset-top)) {
+    #hud {
+        top: calc(25px + env(safe-area-inset-top));
+        padding: 0 15px;
+    }
+    #streakBar {
+        top: calc(100px + env(safe-area-inset-top));
+    }
+    #difficultyIndicator {
+        top: calc(175px + env(safe-area-inset-top));
+    }
+    #combo {
+        top: calc(235px + env(safe-area-inset-top));
+    }
+}
+
+/* Fallback for older iOS (constant instead of env) */
+@supports (padding: constant(safe-area-inset-top)) {
+    #hud {
+        top: calc(25px + constant(safe-area-inset-top));
+    }
+    #streakBar {
+        top: calc(100px + constant(safe-area-inset-top));
+    }
+    #difficultyIndicator {
+        top: calc(175px + constant(safe-area-inset-top));
+    }
+    #combo {
+        top: calc(235px + constant(safe-area-inset-top));
+    }
+}
+
+
+
+
+
+
 
         
     </style>
@@ -831,6 +925,11 @@
 
 
 </style>
+
+
+
+
+
 
 <!-- ADD NEW CELEBRATION & ZONE CSS HERE -->
 <style>
