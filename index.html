@@ -14,7 +14,9 @@
     <link rel="icon" type="image/png" sizes="512x512" href="icon.png">
     <meta name="theme-color" content="#0a0e1a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- ADD THIS LINE -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
 
 
     
@@ -397,7 +399,6 @@
 
 
 
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800;900&display=swap');
 
         * {
             margin: 0;
@@ -1244,10 +1245,6 @@
 
 
 
-</style>
-
-
-
 
 
 
@@ -1323,12 +1320,122 @@
     80% { transform: translate(-50%, 0) scale(1); opacity: 1; }
     100% { transform: translate(-50%, -20px) scale(0.8); opacity: 0; }
 }
+
+/* Missing zone transition animation */
+@keyframes zoneSlideIn {
+    0%  { transform: translate(-50%, -100px); opacity: 0; }
+    15% { transform: translate(-50%, 0);      opacity: 1; }
+    80% { transform: translate(-50%, 0);      opacity: 1; }
+    100%{ transform: translate(-50%, -20px);  opacity: 0; }
+}
+
+/* === IAP / SHOP STYLES === */
+#shopOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(10, 14, 26, 0.97);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.shop-modal {
+    background: rgba(20, 25, 40, 0.98);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 24px;
+    padding: 32px 24px;
+    width: 90%;
+    max-width: 380px;
+    max-height: 85vh;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.shop-modal h2 {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+}
+
+.gem-balance {
+    font-size: 17px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
+}
+
+.gem-balance span { color: #FFD700; }
+
+.iap-product {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.iap-product:active { transform: scale(0.97); background: rgba(255,255,255,0.08); }
+.iap-product.best-value    { border-color: rgba(100,220,100,0.5); background: rgba(100,220,100,0.05); }
+.iap-product.premium-product { border-color: rgba(255,215,0,0.5); background: rgba(255,215,0,0.05); }
+
+.iap-icon { font-size: 32px; flex-shrink: 0; }
+.iap-info { flex: 1; }
+.iap-title { font-size: 15px; font-weight: 700; color: white; margin-bottom: 2px; }
+.iap-desc  { font-size: 12px; color: rgba(255,255,255,0.5); }
+.iap-price { font-size: 15px; font-weight: 800; color: #FFD700; white-space: nowrap; }
+
+/* Continue-game panel on game-over screen */
+.continue-section {
+    background: rgba(102, 126, 234, 0.08);
+    border: 2px solid rgba(102, 126, 234, 0.4);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 12px 0;
+}
+
+.continue-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.continue-timer {
+    font-size: 30px;
+    font-weight: 800;
+    color: #667eea;
+    margin-bottom: 6px;
+}
+
+#continueBtn {
+    margin-top: 8px;
+    font-size: 14px;
+    padding: 14px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+#continueBtn.no-gems {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+    box-shadow: none;
+}
 </style>
-
-</head>
-
-
-
 
 </head>
 <body>
@@ -1406,6 +1513,7 @@
     <div id="overlay">
         <div class="modal">
             <h1>Zoo Keeper Pro</h1>
+            <p id="highScoreText" style="color:#FFD700;font-size:15px;font-weight:700;margin-bottom:4px;">High Score: 0</p>
             <p class="subtitle">Catch 6️⃣7️⃣ to slow time!</p>
 
             <div class="animal-list">
@@ -1489,6 +1597,7 @@
             <button id="startBtn">Start Playing</button>
             <button class="secondary" id="statsBtn">View Stats 📊</button>
             <button class="secondary" id="leaderboardBtn">🏆 Leaderboard</button>
+            <button class="secondary" id="shopBtn">💎 Gem Shop</button>
         </div>
     </div>
 
@@ -1496,6 +1605,13 @@
         <div id="overlay">
             <div class="modal">
                 <h2 id="gameOverTitle">Amazing Run!</h2>
+                <div id="continueSection" style="display:none;">
+                    <div class="continue-section">
+                        <div class="continue-title">Continue Playing?</div>
+                        <div class="continue-timer"><span id="continueTimer">10</span>s</div>
+                        <button id="continueBtn">▶ Continue (3 💎)</button>
+                    </div>
+                </div>
                 <div id="finalScore">0</div>
                 <div id="newHighScore" class="highscore-beat hidden">🏆 NEW HIGH SCORE! 🏆</div>
                 <div id="urgePlayAgain" class="urge-message hidden"></div>
@@ -1568,6 +1684,44 @@
 
                 <button id="closeLeaderboardBtn">Back to Menu</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Gem Shop Overlay -->
+    <div id="shopOverlay" class="hidden">
+        <div class="shop-modal">
+            <h2>💎 Gem Shop</h2>
+            <div class="gem-balance">Balance: <span id="gemBalance">0</span> 💎</div>
+
+            <div class="iap-product" onclick="purchaseProduct('zoo_gems_10')">
+                <div class="iap-icon">💎</div>
+                <div class="iap-info">
+                    <div class="iap-title">Starter Pack</div>
+                    <div class="iap-desc">10 Gems — use to continue games</div>
+                </div>
+                <div class="iap-price">$0.99</div>
+            </div>
+
+            <div class="iap-product best-value" onclick="purchaseProduct('zoo_gems_50')">
+                <div class="iap-icon">💎</div>
+                <div class="iap-info">
+                    <div class="iap-title">Gem Pack ⭐ Best Value</div>
+                    <div class="iap-desc">50 Gems — 5× more value!</div>
+                </div>
+                <div class="iap-price">$2.99</div>
+            </div>
+
+            <div class="iap-product premium-product" onclick="purchaseProduct('zoo_premium')">
+                <div class="iap-icon">👑</div>
+                <div class="iap-info">
+                    <div class="iap-title">Premium Upgrade</div>
+                    <div class="iap-desc">Golden basket · Start with 5 lives · Ad-free</div>
+                </div>
+                <div class="iap-price">$4.99</div>
+            </div>
+
+            <button onclick="restorePurchases()" class="secondary" style="margin-top:16px;">Restore Purchases</button>
+            <button onclick="hideShop()" class="secondary">Close</button>
         </div>
     </div>
 
@@ -2030,7 +2184,7 @@ function resetGameTracker() {
             document.getElementById('highScoreText').textContent = `High Score: ${currentHighScore}`;
         }
 
-        // updateMainMenuHighScore();
+        updateMainMenuHighScore();
 
         let audioCtx = null;
         let audioInitialized = false;
@@ -2105,13 +2259,12 @@ function resetGameTracker() {
         const ctx = canvas.getContext('2d', { alpha: false });
 
         const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
         ctx.scale(dpr, dpr);
 
-        const gameWidth = rect.width;
-        const gameHeight = rect.height;
+        const gameWidth = window.innerWidth;
+        const gameHeight = window.innerHeight;
 
         let gameRunning = false;
         let score = 0;
@@ -2485,8 +2638,8 @@ function checkSlowMo(time) {
             ctx.arc(player.x + 40, player.y + 40, player.radius, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.strokeStyle = 'rgba(102, 126, 234, 0.6)';
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = isPremium ? 'rgba(255, 215, 0, 0.9)' : 'rgba(102, 126, 234, 0.6)';
+            ctx.lineWidth = isPremium ? 4 : 3;
             ctx.beginPath();
             ctx.arc(player.x + 40, player.y + 40, player.radius + 5, 0, Math.PI * 2);
             ctx.stroke();
@@ -2862,24 +3015,25 @@ function checkSlowMo(time) {
 
 function startGame() {
     initAudio();
-    console.log("START GAME CALLED!");
-
-    // NEW: Reset achievement tracker
     resetGameTracker();
 
     totalPlays++;
     localStorage.setItem('totalPlays', totalPlays);
 
-    dangerItems = []; // Add this line
+    dangerItems = [];
     lastDangerSpawn = performance.now() + 10000;
+    clearInterval(continueTimer);
+    continueAvailable = false;
+    const contSect = document.getElementById('continueSection');
+    if (contSect) contSect.style.display = 'none';
 
     document.getElementById('overlay').classList.add('hidden');
     document.getElementById('statsScreen').classList.add('hidden');
     document.getElementById('leaderboardScreen').classList.add('hidden');
     gameRunning = true;
-    paused = false;  // ADD THIS LINE - make sure game isn't paused
+    paused = false;
     score = 0;
-    lives = 3;
+    lives = isPremium ? 5 : 3;
     combo = 0;
     streak = 0;
     maxStreak = 0;
@@ -2940,6 +3094,7 @@ function startGame() {
 
                 const gameOverScreen = document.getElementById('gameOverScreen');
                 gameOverScreen.classList.remove('hidden');
+                showContinueOption();
 
                 document.getElementById('finalScore').textContent = score;
                 document.getElementById('stats').textContent = `${total} animals rescued`;
@@ -3009,6 +3164,8 @@ function startGame() {
         }
 
         function restart() {
+            clearInterval(continueTimer);
+            continueAvailable = false;
             document.getElementById('gameOverScreen').classList.add('hidden');
             startGame();
         }
@@ -3065,41 +3222,6 @@ function startGame() {
 
 
 
-        // Pause button functionality
-document.getElementById('pauseButton').addEventListener('click', () => {
-    if (!gameRunning) return; // Don't allow pausing if game isn't running
-    
-    paused = true;
-    document.getElementById('pauseOverlay').classList.remove('hidden');
-    document.getElementById('pauseButton').style.display = 'none'; // Hide pause button when paused
-});
-
-// Resume button
-document.getElementById('resumeButton').addEventListener('click', () => {
-    paused = false;
-    document.getElementById('pauseOverlay').classList.add('hidden');
-    document.getElementById('pauseButton').style.display = 'flex'; // Show pause button again
-    
-    // Resume the game loop
-    if (gameRunning && !animationFrameId) {
-        requestAnimationFrame(gameLoop);
-    }
-});
-
-// Quit button (returns to main menu)
-document.getElementById('quitButton').addEventListener('click', () => {
-    paused = false;
-    gameRunning = false;
-    document.getElementById('pauseOverlay').classList.add('hidden');
-    document.getElementById('pauseButton').style.display = 'flex';
-    document.getElementById('overlay').classList.remove('hidden');
-    
-    // Cancel any ongoing animation frame
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
-    }
-});
 
 
 /// Auto-pause when user switches apps, gets a call, or minimizes browser
@@ -3208,6 +3330,169 @@ document.getElementById('quitButton').addEventListener('click', () => {
 
 
 
+
+
+// ============ IAP / SHOP SYSTEM ============
+
+const IAP_PRODUCTS = {
+    zoo_gems_10: { id: 'zoo_gems_10', title: 'Starter Pack',    price: '$0.99', gems: 10, isPremium: false },
+    zoo_gems_50: { id: 'zoo_gems_50', title: 'Gem Pack',        price: '$2.99', gems: 50, isPremium: false },
+    zoo_premium: { id: 'zoo_premium', title: 'Premium Upgrade', price: '$4.99', gems: 0,  isPremium: true  }
+};
+
+let gems           = parseInt(localStorage.getItem('zoo_gems')    || '0');
+let isPremium      = localStorage.getItem('zoo_premium')          === 'true';
+const CONTINUE_COST = 3;
+let continueAvailable = false;
+let continueTimer     = null;
+
+function updateGemDisplays() {
+    const el = document.getElementById('gemBalance');
+    if (el) el.textContent = gems;
+}
+
+function awardGems(count) {
+    gems += count;
+    localStorage.setItem('zoo_gems', gems);
+    updateGemDisplays();
+}
+
+function spendGems(count) {
+    if (gems < count) return false;
+    gems -= count;
+    localStorage.setItem('zoo_gems', gems);
+    updateGemDisplays();
+    return true;
+}
+
+// ---- Native iOS WKWebView / Android bridge ----
+// The native wrapper calls window.webkit.messageHandlers.iapBridge.postMessage(...)
+// and then invokes window.iapPurchaseComplete / iapPurchaseFailed / iapRestoreComplete
+function purchaseProduct(productId) {
+    if (window.webkit?.messageHandlers?.iapBridge) {
+        window.webkit.messageHandlers.iapBridge.postMessage({ action: 'purchase', productId });
+    } else if (window.ZooKeeperBridge?.purchase) {
+        window.ZooKeeperBridge.purchase(productId);   // Android WebView bridge
+    } else {
+        // Dev/browser fallback: simulate purchase immediately
+        iapPurchaseComplete(productId);
+    }
+}
+
+function restorePurchases() {
+    if (window.webkit?.messageHandlers?.iapBridge) {
+        window.webkit.messageHandlers.iapBridge.postMessage({ action: 'restore' });
+    } else {
+        showAchievement('ℹ️', 'Restore', 'No purchases to restore');
+    }
+}
+
+// Called by native layer after StoreKit confirms purchase
+window.iapPurchaseComplete = function(productId) {
+    const product = IAP_PRODUCTS[productId];
+    if (!product) return;
+
+    if (product.isPremium) {
+        isPremium = true;
+        localStorage.setItem('zoo_premium', 'true');
+        showAchievement('👑', 'Premium Unlocked!', 'Golden basket + 5 lives active');
+    } else if (product.gems > 0) {
+        awardGems(product.gems);
+        showAchievement('💎', 'Gems Added!', `+${product.gems} gems credited`);
+    }
+    updateGemDisplays();
+    updateContinueButton();
+};
+
+window.iapPurchaseFailed = function(productId, errorMsg) {
+    console.warn('IAP failed:', productId, errorMsg);
+};
+
+window.iapRestoreComplete = function(productIds) {
+    if (Array.isArray(productIds) && productIds.includes('zoo_premium')) {
+        isPremium = true;
+        localStorage.setItem('zoo_premium', 'true');
+    }
+    showAchievement('✅', 'Restored!', 'Purchases restored successfully');
+};
+
+// ---- Shop UI ----
+function showShop() {
+    updateGemDisplays();
+    document.getElementById('shopOverlay').classList.remove('hidden');
+}
+
+function hideShop() {
+    document.getElementById('shopOverlay').classList.add('hidden');
+}
+
+// ---- Continue-game mechanic ----
+function updateContinueButton() {
+    const btn = document.getElementById('continueBtn');
+    if (!btn) return;
+    if (gems >= CONTINUE_COST) {
+        btn.textContent = `▶ Continue (${CONTINUE_COST} 💎)`;
+        btn.classList.remove('no-gems');
+    } else {
+        btn.textContent = `Get Gems to Continue 💎`;
+        btn.classList.add('no-gems');
+    }
+}
+
+function showContinueOption() {
+    continueAvailable = true;
+    updateContinueButton();
+    let timeLeft = 10;
+    const timerEl = document.getElementById('continueTimer');
+    const sect    = document.getElementById('continueSection');
+    if (sect)    sect.style.display = 'block';
+    if (timerEl) timerEl.textContent = timeLeft;
+    clearInterval(continueTimer);
+    continueTimer = setInterval(() => {
+        timeLeft--;
+        if (timerEl) timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(continueTimer);
+            continueAvailable = false;
+            if (sect) sect.style.display = 'none';
+        }
+    }, 1000);
+}
+
+function continueGame() {
+    if (!continueAvailable) return;
+    if (gems >= CONTINUE_COST) {
+        spendGems(CONTINUE_COST);
+        clearInterval(continueTimer);
+        continueAvailable = false;
+        document.getElementById('continueSection').style.display = 'none';
+        document.getElementById('gameOverScreen').classList.add('hidden');
+
+        lives = 3;
+        animals = [];
+        powerupNumbers = [];
+        dangerItems = [];
+        particles = [];
+        gameRunning = true;
+        paused = false;
+        updateLives();
+        document.getElementById('pauseButton').style.display = 'flex';
+        lastSpawn        = performance.now();
+        lastPowerupSpawn = performance.now() + 10000;
+        lastDangerSpawn  = performance.now() + 8000;
+        animationFrameId = requestAnimationFrame(gameLoop);
+    } else {
+        showShop();
+    }
+}
+
+// ---- Wire up new buttons ----
+document.getElementById('shopBtn').addEventListener('click', showShop);
+document.getElementById('continueBtn').addEventListener('click', continueGame);
+
+// ---- Boot initialisation ----
+updateGemDisplays();
+updateMainMenuHighScore();
 
     </script>
 </body>
